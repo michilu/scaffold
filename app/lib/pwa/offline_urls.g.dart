@@ -1,6 +1,7 @@
 /// URLs for offline cache.
 final List<String> offlineUrls = [
   './',
+  './gopher.js',
   './images/icons/icon-large.png',
   './images/icons/icon-small.png',
   './images/logo.svg',

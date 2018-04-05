@@ -17,6 +17,11 @@ build:
         go version
   - setup-go-workspace
   - script:
+      name: install GopherJS
+      code: |
+        ( type gopherjs > /dev/null 2>&1 ) || go get github.com/gopherjs/gopherjs
+        gopherjs version
+  - script:
       name: dep
       code: |
         if [ -f Gopkg.toml ]; then

@@ -1,3 +1,6 @@
 .firebaserc
 /app/build
+/app/web/*.js
+/app/web/*.js.*
 pubspec.lock
+/vendor
