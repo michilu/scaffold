@@ -2,5 +2,6 @@
 /app/build
 /app/web/*.js
 /app/web/*.js.*
+package-lock.json
 pubspec.lock
 /vendor

@@ -10,7 +10,16 @@ $(GOPHERJS): $(GO)
 	@# https://github.com/gopherjs/gopherjs/issues/598#issuecomment-282563634
 	-find $(GOPATH)/pkg -depth 1 -type d -name "*_js" -exec rm -fr {} \;
 	-find $(GOPATH)/pkg -depth 1 -type d -name "*_js_min" -exec rm -fr {} \;
-	gopherjs build --tags gopherjs $(GO_LIST)/hackernews/gopherjs --output $@
+	gopherjs build --tags gopherjs --minify $(GO_LIST)/hackernews/gopherjs --output $@
+
+NODE_MODULES_BASE=node_modules
+UGLIFYJS=$(NODE_MODULES_BASE)/.bin/uglifyjs
+
+$(NODE_MODULES_BASE): package.json
+	npm install
+
+uglifyjs: $(GOPHERJS) $(NODE_MODULES_BASE)
+	cd $(dir $<) && ../../$(UGLIFYJS) --compress --mangle --output $(notdir $<) $(notdir $<)
 
 PUB_SPEC=$(shell find . -type d -name build -prune -o -type f -name pubspec.yaml -print)
 PUB_LOCK=$(PUB_SPEC:.yaml=.lock)
@@ -27,7 +36,7 @@ G_DART=$(DART:.dart=.g.dart)
 .dart.g.dart:
 	(cd hackernews/dart && pub run build_runner build)
 
-app/build: $(GOPHERJS) $(PUB_LOCK) app/.packages $(G_DART)
+app/build: uglifyjs $(PUB_LOCK) app/.packages $(G_DART)
 	(cd app\
 	&& pub run build_runner build --config=release --fail-on-severe --output build\
 	&& pub run pwa --exclude ".DS_Store,packages/**,.packages,*.dart,*.js.deps,*.js.info.json,*.js.map,*.js.tar.gz,*.module"\

@@ -30,6 +30,7 @@ build:
         dep status
         git --no-pager diff Gopkg.lock
         fi
+  - npm-install
   - script:
       name: build
       code: |

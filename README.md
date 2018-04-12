@@ -3,3 +3,20 @@ A scaffold
 
 # ref
 - https://github.com/dart-lang/angular/tree/master/examples/hacker_news_pwa
+
+# optimize
+
+1. minify: https://github.com/gopherjs/gopherjs#performance-tips
+
+:
+
+    7,196,874 bytes:  100%:   $ gopherjs build
+    4,661,791 bytes:   65%:   $ gopherjs build --minify
+
+2. UglifyJS 3: https://github.com/mishoo/UglifyJS2
+
+:
+
+    4,547,810 bytes:   63%:   $ gopherjs build --minify && uglifyjs
+    4,274,152 bytes:   59%:   $ gopherjs build --minify && uglifyjs --compress
+    3,843,890 bytes:   53%:   $ gopherjs build --minify && uglifyjs --compress --mangle
