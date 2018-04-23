@@ -1,0 +1,86 @@
+build:
+  box: michilu/docker-dart:2.0.0-dev.46.0
+  steps:
+  - script:
+      name: Install Go
+      code: |
+        set -x
+        mkdir -p "$HOME/goroot"
+        mkdir -p "$HOME/go"
+        export GOROOT=$HOME/goroot
+        export GOPATH=$HOME/go
+        export PATH=$HOME/go/bin:$HOME/goroot/bin:$PATH
+        VER="1.10.1"
+        file=go$VER.linux-amd64.tar.gz
+        (cd "$WERCKER_CACHE_DIR" && [ -f "$file" ] || curl -sfLO https://dl.google.com/go/go$VER.linux-amd64.tar.gz)
+        tar --extract --gzip --directory=$HOME/goroot --strip-components=1 --file=$WERCKER_CACHE_DIR/$file
+        go version
+  - setup-go-workspace
+  - script:
+      name: dep
+      code: |
+        if [ -f Gopkg.toml ]; then
+        go get github.com/golang/dep/cmd/dep
+        dep ensure
+        dep status
+        git --no-pager diff Gopkg.lock
+        fi
+  - script:
+      name: build
+      code: |
+        export PUB_CACHE=$WERCKER_CACHE_DIR/pub_cache
+  - script:
+      name: build
+      code: |
+        make
+  after-steps:
+  - slack-notifier:
+      url: $SLACK_URL
+
+lint:
+  box: blueoceans/golang:1.10
+  steps:
+  - setup-go-workspace
+  - script:
+      name: setup cache for go
+      code: |
+        set -x
+        mkdir -p "$WERCKER_CACHE_DIR/go"
+        if [ -z "$(go env GOPATH)" ]; then
+        export GOPATH=$WERCKER_CACHE_DIR/go
+        else
+        export GOPATH=$WERCKER_CACHE_DIR/go:$(go env GOPATH)
+        fi
+  - script:
+      name: Install golint
+        type golint > /dev/null 2>&1 || go get golang.org/x/lint/golint
+  - script:
+      name: Install reviewdog
+      code: |
+        type reviewdog > /dev/null 2>&1 || go get github.com/haya14busa/reviewdog/cmd/reviewdog
+        reviewdog -version
+  - script:
+      name: reviewdog
+      code: |
+        if [ -f .git/FETCH_HEAD ]; then
+        export CI_PULL_REQUEST=$(awk -F/ '{print $3}' .git/FETCH_HEAD)
+        export CI_REPO_OWNER=${WERCKER_GIT_OWNER}
+        export CI_REPO_NAME=${WERCKER_GIT_REPOSITORY}
+        export CI_COMMIT=${WERCKER_GIT_COMMIT}
+        go list ./...|xargs -L1 golint|reviewdog -f=golint -ci=common
+        else
+
+        THRESHOLD_WARN=${REVIEWDOG_THRESHOLD_WARN-5}
+        THRESHOLD_FAIL=${REVIEWDOG_THRESHOLD_FAIL-10}
+
+        LINTLINES=$(go list ./... | xargs -L1 golint | reviewdog -f=golint -diff="git diff remotes/origin/master" | tee /tmp/lint_results.txt | wc -l | tr -d " ")
+
+        cat /tmp/lint_results.txt
+        if [ "$LINTLINES" -ge "${THRESHOLD_FAIL}" ]; then echo "Time to tidy up: $LINTLINES lint warnings." > "$WERCKER_REPORT_MESSAGE_FILE"; fail "Time to tidy up."; fi
+        if [ "$LINTLINES" -ge "${THRESHOLD_WARN}" ]; then echo "You should be tidying soon: $LINTLINES lint warnings." > "$WERCKER_REPORT_MESSAGE_FILE"; warn "You should be tidying soon."; fi
+        if [ "$LINTLINES" -gt 0 ]; then echo "You are fairly tidy: $LINTLINES lint warnings." > "$WERCKER_REPORT_MESSAGE_FILE"; fi
+
+        fi
+  after-steps:
+  - slack-notifier:
+      url: $SLACK_URL
