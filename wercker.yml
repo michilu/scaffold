@@ -1,38 +1,62 @@
-build:
-  box: michilu/docker-dart:2.0.0-dev.46.0
+go:
+  box: blueoceans/golang:1.10
   steps:
   - script:
-      name: Install Go
-      code: |
-        set -x
-        mkdir -p "$HOME/goroot"
-        mkdir -p "$HOME/go"
-        export GOROOT=$HOME/goroot
-        export GOPATH=$HOME/go
-        export PATH=$HOME/go/bin:$HOME/goroot/bin:$PATH
-        VER="1.10.1"
-        file=go$VER.linux-amd64.tar.gz
-        (cd "$WERCKER_CACHE_DIR" && [ -f "$file" ] || curl -sfLO https://dl.google.com/go/go$VER.linux-amd64.tar.gz)
-        tar --extract --gzip --directory=$HOME/goroot --strip-components=1 --file=$WERCKER_CACHE_DIR/$file
-        go version
+      name: set -x
+      code: set -x
   - setup-go-workspace
+  - script:
+      name: setup cache for go
+      code: |
+        mkdir -p "$WERCKER_CACHE_DIR/go"
+        if [ -z "$(go env GOPATH)" ]; then
+        export GOPATH=$WERCKER_CACHE_DIR/go
+        else
+        export GOPATH=$WERCKER_CACHE_DIR/go:$(go env GOPATH)
+        fi
+        export PATH=$WERCKER_CACHE_DIR/go/bin:$PATH
+  - script:
+      name: dep
+      code: |
+        if [ -f Gopkg.toml ]; then
+        ( type dep > /dev/null 2>&1 ) || go get github.com/golang/dep/cmd/dep
+        dep ensure
+        dep status
+        git --no-pager diff Gopkg.lock
+        fi
   - script:
       name: install GopherJS
       code: |
         ( type gopherjs > /dev/null 2>&1 ) || go get github.com/gopherjs/gopherjs
         gopherjs version
   - script:
-      name: dep
+      name: go build
       code: |
-        if [ -f Gopkg.toml ]; then
-        go get github.com/golang/dep/cmd/dep
-        dep ensure
-        dep status
-        git --no-pager diff Gopkg.lock
-        fi
+        go version
+        make gopherjs
+  - script:
+      name: output
+      code: |
+        tar czvf $WERCKER_OUTPUT_DIR/go.tar.gz ./*
+  after-steps:
+  - slack-notifier:
+      url: $SLACK_URL
+
+dart:
+  box: michilu/docker-dart:2.0.0-dev.46.0
+  steps:
+  - script:
+      name: set -x
+      code: set -x
+  - install-packages:
+      packages: tar
+  - script:
+      name: input
+      code: |
+        tar xzvf go.tar.gz
   - npm-install
   - script:
-      name: build
+      name: setup cache for dart
       code: |
         export PUB_CACHE=$WERCKER_CACHE_DIR/pub_cache
   - script:
@@ -57,13 +81,14 @@ lint:
         else
         export GOPATH=$WERCKER_CACHE_DIR/go:$(go env GOPATH)
         fi
+        export PATH=$WERCKER_CACHE_DIR/go/bin:$PATH
   - script:
       name: Install golint
-        type golint > /dev/null 2>&1 || go get golang.org/x/lint/golint
+        ( type golint > /dev/null 2>&1 ) || go get golang.org/x/lint/golint
   - script:
       name: Install reviewdog
       code: |
-        type reviewdog > /dev/null 2>&1 || go get github.com/haya14busa/reviewdog/cmd/reviewdog
+        ( type reviewdog > /dev/null 2>&1 ) || go get github.com/haya14busa/reviewdog/cmd/reviewdog
         reviewdog -version
   - script:
       name: reviewdog
