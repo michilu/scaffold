@@ -1,0 +1,41 @@
+{
+  "hosting": {
+    "public": "build",
+    "ignore": [
+      "*.module",
+      "*.ng_placeholder",
+      "packages/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Link",
+            "value": "</main.dart.js>;rel=preload;as=script"
+          },
+          {
+            "key": "Cache-Control",
+            "value": "max-age=604801"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(js|svg)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=604801"
+          }
+        ]
+      }
+    ],
+    "predeploy": "pub upgrade && rm -rf build; pub run build_runner build -o web:build --fail-on-severe --release"
+  }
+}
