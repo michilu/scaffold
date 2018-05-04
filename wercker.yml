@@ -67,6 +67,66 @@ dart:
   - slack-notifier:
       url: $SLACK_URL
 
+end-to-end:
+  box:
+    id: michilu/alpine-chrome
+    entrypoint: /bin/sh -c
+    cmd: bash
+  steps:
+  - script:
+      name: set -x
+      code: set -x
+  - ytet5uy4/apk-add:
+      update: true
+      packages: curl tar
+  - script:
+      name: run server
+      code: |
+        (cd app/build/web/ && python -m SimpleHTTPServer) &
+  - script:
+      name: versions
+      code: chromium-browser --version
+  - script:
+      name: take a screenshot
+      # https://www.chromium.org/for-testers/enable-logging<Paste>
+      # https://chromium.googlesource.com/chromium/src/+/master/base/logging.h#343
+      code: |
+        chromium-browser --headless --disable-gpu --no-sandbox \
+        --enable-logging=stderr --v=2 \
+        --screenshot --hide-scrollbars --window-size=412,732 \
+        http://localhost:8000
+  after-steps:
+  - slack-notifier:
+      url: $SLACK_URL
+
+put-to-slack:
+  box: blueoceans/golang:1.10
+  steps:
+  - script:
+      name: set -x
+      code: set -x
+  - setup-go-workspace
+  - script:
+      name: setup cache for go
+      code: |
+        mkdir -p "$WERCKER_CACHE_DIR/go"
+        if [ -z "$(go env GOPATH)" ]; then
+        export GOPATH=$WERCKER_CACHE_DIR/go
+        else
+        export GOPATH=$WERCKER_CACHE_DIR/go:$(go env GOPATH)
+        fi
+        export PATH=$WERCKER_CACHE_DIR/go/bin:$PATH
+  - script:
+      name: put to slack
+      code: |
+        mv screenshot.png screenshot-${WERCKER_GIT_COMMIT:0:7}.png
+        ( type slackapi > /dev/null 2>&1 ) || go get github.com/cixtor/slackapi/slackapi
+        slackapi version
+        slackapi files.upload ci screenshot-${WERCKER_GIT_COMMIT:0:7}.png
+  after-steps:
+  - slack-notifier:
+      url: $SLACK_URL
+
 lint:
   box: blueoceans/golang:1.10
   steps:
