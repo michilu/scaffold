@@ -20,3 +20,14 @@ A scaffold
     4,547,810 bytes:   63%:   $ gopherjs build --minify && uglifyjs
     4,274,152 bytes:   59%:   $ gopherjs build --minify && uglifyjs --compress
     3,843,890 bytes:   53%:   $ gopherjs build --minify && uglifyjs --compress --mangle
+
+# Wercker CI
+
+setup the environment.
+see: https://app.wercker.com/<organization>/<application>/environment
+
+- 'SLACK_URL' needs by the 'slack-notifier' step. see: https://slack.com/apps/A0F7XDUAZ-incoming-webhooks
+- 'SLACK_TOKEN' needs by th e'slackapi' command. see: https://api.slack.com/custom-integrations/legacy-tokens
+
+setup the workflows.
+see: https://app.wercker.com/<organization>/<application>/workflows
