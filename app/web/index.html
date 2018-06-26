@@ -4,10 +4,13 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#212121">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="Description" content="A Hacker News reader implemented as a Progressive Web App using AngularDart.">
-  <link rel="preload" href="https://api.hnpwa.com/v0/news/1.json" as="fetch" crossorigin />
+  <meta name="Description" content="A Hacker News reader implemented as a Progressive Web App using Dart.">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/icons/android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="images/icons/favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
   <base href="/">
-  <title>Hacker News - AngularDart PWA</title>
+  <title>Hacker News - Dart PWA</title>
   <script defer src="gopher.js"></script>
   <script defer src="main.dart.js"></script>
   <link rel="manifest" href="manifest.json">
@@ -15,16 +18,23 @@
     * {
       box-sizing: border-box;
     }
-    html {
+    html, body {
       font-family: Roboto, sans-serif;
       font-size: 18px;
+      height: 100%;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
     }
     body {
-      background: #f2f2f2;
-      margin: 0;
+      background: #212121;
       overflow-wrap: break-word;
       -webkit-font-smoothing: antialiased;
       overflow-y:scroll;
+    }
+    app {
+      flex: 1;
+      background: white;
     }
     header {
       background: #212121;
@@ -52,17 +62,23 @@
     nav a:hover {
       color: #fff;
     }
-    nav a.active {
-      border-bottom: 2px solid #fff;
-      border-top: 2px solid transparent;
-      color: #fff;
-    }
     nav img {
       width: 40px;
     }
     main {
       margin: 56px auto 0 auto;
       max-width: 800px;
+    }
+    footer {
+      background: #212121;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      padding: 8px;
+      height: 37px;
+      display: flex;
     }
     article {
       align-items: center;
@@ -71,6 +87,9 @@
       display: flex;
       min-height: 56px;
       padding: 12px 0;
+    }
+    article:last-of-type {
+      margin-bottom: 37px;
     }
     item {
       padding-right: 16px;
@@ -89,7 +108,7 @@
     <header>
       <nav>
         <a href="https://webdev.dartlang.org/angular">
-          <img src="/images/logo.svg" alt="AngularDart logo" />
+          <img src="/images/logo.svg" alt="Dart logo" />
         </a>
         <a href="">top</a>
         <a href="newest">new</a>
@@ -176,6 +195,7 @@
         <span class="rank">19</span>
         <item></item>
       </article>
+      <footer></footer>
     </main>
   </app>
 </body>

@@ -9,9 +9,6 @@ import 'package:hackernews/hackernews.dart';
 /// Represents the base URL for HTTP requests using [HackerNewsService].
 const baseUrl = const OpaqueToken<String>('baseUrl');
 
-/// Provided by https://github.com/cheeaun/node-hnapi/
-///
-/// Used with appreciation!
 const defaultBaseUrl = 'https://api.hnpwa.com/v0';
 
 class HackerNewsService {
