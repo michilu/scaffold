@@ -38,7 +38,7 @@ G_DART=$(DART:.dart=.g.dart)
 
 app/build: uglifyjs $(PUB_LOCK) app/.packages $(G_DART)
 	(cd app\
-	&& pub run build_runner build --config=release --fail-on-severe --output build\
+	&& pub run build_runner build --release --fail-on-severe --output build\
 	&& pub run pwa --exclude ".DS_Store,packages/**,.packages,*.dart,*.js.deps,*.js.info.json,*.js.map,*.js.tar.gz,*.module"\
 	)
 
