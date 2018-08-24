@@ -43,7 +43,7 @@ go:
       url: $SLACK_URL
 
 dart:
-  box: michilu/docker-dart:2.0.0-dev.46.0
+  box: michilu/dart:2.0.0
   steps:
   - script:
       name: set -x

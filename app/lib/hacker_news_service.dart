@@ -13,14 +13,14 @@ const defaultBaseUrl = 'https://api.hnpwa.com/v0';
 
 class HackerNewsService {
   final String _baseUrl;
-  HackerNews hackernews;
+  HackerNews _hackernews;
 
   // Store the last feed in memory to instantly load when requested.
   String _cacheFeedKey;
   List<Map> _cacheFeedResult;
 
   HackerNewsService(@baseUrl this._baseUrl) {
-    hackernews = new HackerNews(_baseUrl);
+    _hackernews = new HackerNews(_baseUrl);
   }
 
   Future<List<Map>> getFeed(String name, int page) async {
@@ -28,7 +28,7 @@ class HackerNewsService {
     if (_cacheFeedKey == url) {
       return _cacheFeedResult;
     }
-    final decoded = await hackernews.getFeed(name, page);
+    final decoded = await _hackernews.getFeed(name, page);
     _cacheFeedKey = url;
     _cacheFeedResult = decoded;
     final Completer c = new Completer();
@@ -37,6 +37,6 @@ class HackerNewsService {
   }
 
   Future<Map> getItem(String id) async {
-    return await hackernews.getItem(id);
+    return await _hackernews.getItem(id);
   }
 }
