@@ -31,3 +31,22 @@ see: https://app.wercker.com/<organization>/<application>/environment
 
 setup the workflows.
 see: https://app.wercker.com/<organization>/<application>/workflows
+
+# sync to upstream
+
+Add upstream:
+```console
+git clone git@github.com:michilu/scaffold.git .
+git remote add upstream https://github.com/dart-lang/angular.git
+git checkout upstream/master
+git subtree split --prefix=examples/hacker_news_pwa -b examples/hacker_news_pwa
+```
+
+Sync to upstream:
+```console
+git fetch upstream master
+git checkout upstream/master
+git subtree push --prefix=examples/hacker_news_pwa origin examples/hacker_news_pwa
+git checkout upstream
+git subtree pull --prefix=app origin examples/hacker_news_pwa
+```
