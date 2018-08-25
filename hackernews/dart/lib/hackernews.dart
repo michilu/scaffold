@@ -14,15 +14,15 @@ abstract class _HackerNews implements JsInterface {
   JsObject GetItem(String id);
 
   Future<List<Map>> getFeed(String name, num page) {
-    Completer c = Completer();
-    JsObject o = GetFeed(name, page);
+    final Completer c = Completer();
+    final JsObject o = GetFeed(name, page);
     o.callMethod('then', [c.complete]);
     return c.future;
   }
 
   Future<Map> getItem(String id) {
-    Completer c = Completer();
-    JsObject o = GetItem(id);
+    final Completer c = Completer();
+    final JsObject o = GetItem(id);
     o.callMethod('then', [c.complete]);
     return c.future;
   }

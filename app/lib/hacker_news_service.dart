@@ -20,23 +20,23 @@ class HackerNewsService {
   List<Map> _cacheFeedResult;
 
   HackerNewsService(@baseUrl this._baseUrl) {
-    _hackernews = new HackerNews(_baseUrl);
+    _hackernews = HackerNews(_baseUrl);
   }
 
-  Future<List<Map>> getFeed(String name, int page) async {
+  Future<List<Map>> getFeed(String name, int page) {
     final url = '$_baseUrl/$name/$page.json';
     if (_cacheFeedKey == url) {
-      return _cacheFeedResult;
+      return Future.value(_cacheFeedResult);
     }
-    final decoded = await _hackernews.getFeed(name, page);
-    _cacheFeedKey = url;
-    _cacheFeedResult = decoded;
-    final Completer c = new Completer();
-    c.complete(_cacheFeedResult);
-    return c.future;
+    return _hackernews.getFeed(name, page).then((decoded) {
+      _cacheFeedKey = url;
+      return _cacheFeedResult = List<Map>.from(decoded);
+    });
   }
 
-  Future<Map> getItem(String id) async {
-    return await _hackernews.getItem(id);
+  Future<Map> getItem(String id) {
+    return _hackernews.getItem(id).then((decoded) {
+      return decoded;
+    });
   }
 }
