@@ -20,7 +20,7 @@ class HackerNewsService {
   List<Map> _cacheFeedResult;
 
   HackerNewsService(@baseUrl this._baseUrl) {
-    _hackernews = new HackerNews(_baseUrl);
+    _hackernews = HackerNews(_baseUrl);
   }
 
   Future<List<Map>> getFeed(String name, int page) async {
@@ -31,7 +31,7 @@ class HackerNewsService {
     final decoded = await _hackernews.getFeed(name, page);
     _cacheFeedKey = url;
     _cacheFeedResult = decoded;
-    final Completer c = new Completer();
+    final Completer c = Completer();
     c.complete(_cacheFeedResult);
     return c.future;
   }
