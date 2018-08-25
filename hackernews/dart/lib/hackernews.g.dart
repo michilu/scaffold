@@ -21,7 +21,7 @@ class HackerNews extends JsInterface {
     JsObject o = GetFeed(name, page);
     o.callMethod('then', [
       (v) {
-        c.complete(v);
+        c.complete(List<Map>.from(v));
       }
     ]);
     return c.future.then((v) {
@@ -34,7 +34,7 @@ class HackerNews extends JsInterface {
     JsObject o = GetItem(id);
     o.callMethod('then', [
       (v) {
-        c.complete(v);
+        c.complete(Map.from(v));
       }
     ]);
     return c.future.then((v) {
