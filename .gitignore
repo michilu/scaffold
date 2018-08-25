@@ -1,7 +1,8 @@
 .firebaserc
 /app/build
+/app/test/**/*.g.dart
 /app/web/*.js
 /app/web/*.js.*
+/vendor
 package-lock.json
 pubspec.lock
-/vendor

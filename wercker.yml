@@ -43,7 +43,7 @@ go:
       url: $SLACK_URL
 
 dart:
-  box: michilu/docker-dart:2.0.0-dev.46.0
+  box: michilu/dart:2.0.0
   steps:
   - script:
       name: set -x
@@ -120,9 +120,9 @@ put-to-slack:
       name: put to slack
       code: |
         mv screenshot.png screenshot-${WERCKER_GIT_COMMIT:0:7}.png
-        ( type slackapi > /dev/null 2>&1 ) || go get github.com/cixtor/slackapi/slackapi
-        slackapi version
-        slackapi files.upload ci screenshot-${WERCKER_GIT_COMMIT:0:7}.png
+        ( type slackcli > /dev/null 2>&1 ) || go get github.com/cixtor/slackcli
+        slackcli version
+        slackcli files.upload ci screenshot-${WERCKER_GIT_COMMIT:0:7}.png
   after-steps:
   - slack-notifier:
       url: $SLACK_URL

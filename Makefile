@@ -34,11 +34,11 @@ DART=hackernews/dart/lib/hackernews.dart
 G_DART=$(DART:.dart=.g.dart)
 .SUFFIXES: .dart .g.dart
 .dart.g.dart:
-	(cd hackernews/dart && pub run build_runner build)
+	(cd hackernews/dart && pub run build_runner build --delete-conflicting-outputs)
 
 app/build: uglifyjs $(PUB_LOCK) app/.packages $(G_DART)
 	(cd app\
-	&& pub run build_runner build --release --fail-on-severe --output build\
+	&& pub run build_runner build --delete-conflicting-outputs --release --fail-on-severe --output build\
 	&& pub run pwa --exclude ".DS_Store,packages/**,.packages,*.dart,*.js.deps,*.js.info.json,*.js.map,*.js.tar.gz,*.module"\
 	)
 
