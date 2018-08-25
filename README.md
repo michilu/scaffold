@@ -26,8 +26,14 @@ A scaffold
 setup the environment.
 see: https://app.wercker.com/<organization>/<application>/environment
 
-- 'SLACK_URL' needs by the 'slack-notifier' step. see: https://slack.com/apps/A0F7XDUAZ-incoming-webhooks
-- 'SLACK_TOKEN' needs by th e'slackapi' command. see: https://api.slack.com/custom-integrations/legacy-tokens
+- 'SLACK_URL' needs by the 'slack-notifier' step.
+  see: https://slack.com/apps/A0F7XDUAZ-incoming-webhooks
+- 'SLACK_TOKEN' needs by the ['slackcli'](https://github.com/cixtor/slackcli) command.
+  see: https://api.slack.com/custom-integrations/legacy-tokens
+- 'FIREBASE_PROJECT' needs by the deploy step.
+  see: https://console.firebase.google.com/
+- 'FIREBASE_TOKEN' needs by the deploy step, via `firebase login:ci`.
+  see: https://github.com/firebase/firebase-tools#using-with-ci-systems
 
 setup the workflows.
 see: https://app.wercker.com/<organization>/<application>/workflows
